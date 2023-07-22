@@ -25,7 +25,6 @@ import { URL } from "url";
     return url.protocol === 'http:' || url.protocol === 'https:';
   }
 
-  // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
   // endpoint to filter an image from a public url.
   // IT SHOULD
@@ -62,10 +61,6 @@ import { URL } from "url";
     
   });
 
-    /**************************************************************************** */
-
-  //! END @TODO1
-  
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async (req, res) => {

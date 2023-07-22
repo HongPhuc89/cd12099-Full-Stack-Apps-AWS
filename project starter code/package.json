@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf www/ || true",
     "dev": "node server.js",
-    "build": "npm run clean && tsc && mkdir www/ && cp package.json www/package.json && mkdir www/tmp/ && cd www && zip -r Archive.zip . && cd ..",
+    "build": "npm run clean && tsc && sh create_bundle.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
