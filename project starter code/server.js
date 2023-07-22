@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
+import { URL } from "url";
+
 
 
 
@@ -12,6 +14,16 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
   
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
+
+  function isValidHttpUrl(string) {
+    let url;
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  }
 
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
@@ -26,6 +38,29 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util.js';
   //    image_url: URL of a publicly accessible image
   // RETURNS
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
+
+  app.get('/filteredimage', async (req, res) => {
+    const { image_url } = req.query;
+  
+    // Check if image_url is provided
+    if (!image_url || !isValidHttpUrl(image_url)) {
+      return res.status(400).json({ error: 'A valid HTTP URL for the image is required in query parameters' });
+    }
+  
+    const filteredpath = await filterImageFromURL(image_url);
+    if (filteredpath) {
+      res.sendFile(filteredpath, {}, (err) => {
+        // Delete the filtered image file after the response is sent
+        if (!err) {
+          console.log(`Remove filteredpath: ${filteredpath}`)
+          deleteLocalFiles(filteredpath);
+        }
+      });
+    } else {
+      return res.status(400).json({ error: `Can not filter url with image_url: ${image_url}` });
+    }
+    
+  });
 
     /**************************************************************************** */
 
